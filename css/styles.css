@@ -312,15 +312,15 @@ textarea::placeholder, input[type="text"]::placeholder { color: rgba(168, 164, 1
 }
 .deck-stack.shuffling .deck-card-4 { animation: riffle-a 0.26s ease-in-out infinite alternate; }
 
-.card-fox {
+.card-moon {
   position: absolute;
   inset: 0;
   margin: auto;
-  width: 56%;
-  height: 56%;
+  width: 62%;
+  height: 62%;
   color: var(--indigo-deep);
   pointer-events: none;
-  opacity: 0.92;
+  opacity: 0.9;
 }
 
 /* classic card-back frame on every card in the stack */
