@@ -2,7 +2,7 @@
 
 /* ==========================================================================
    The Fox Reads — UI layer
-   Views: letter → name → ask → spread → shuffle → reading → book / about
+   Views: name → ask → spread → shuffle → reading → book / about
    Engine (js/engine.js) is DOM-free; all DOM work happens here.
    ========================================================================== */
 
@@ -45,16 +45,13 @@ if (typeof document !== "undefined") {
     }
 
     /* ---------- view switching ---------- */
-    var VIEWS = ["letter", "name", "ask", "spread", "shuffle", "reading", "book", "about"];
+    var VIEWS = ["name", "ask", "spread", "shuffle", "reading", "book", "about"];
 
     function showView(name) {
       for (var i = 0; i < VIEWS.length; i++) {
         var el = $("view-" + VIEWS[i]);
         if (el) el.classList.toggle("hidden", VIEWS[i] !== name);
       }
-      // masthead is hidden on the letter view: it would compete with the letter
-      var masthead = document.querySelector(".masthead");
-      if (masthead) masthead.classList.toggle("hidden", name === "letter");
       try { window.scrollTo(0, 0); } catch (e) { /* jsdom */ }
 
       if (name === "book") renderBook();
@@ -63,22 +60,17 @@ if (typeof document !== "undefined") {
       if (name === "ask") syncGreeting();
     }
 
-    /* ---------- letter + name ---------- */
+    /* ---------- name ---------- */
 
     function firstName() {
       var n = (state.meta.name || "").trim();
       return n.split(/\s+/)[0] || "";
     }
 
-    function enterAppFlow() {
-      if (!state.meta.seenLetter) {
-        // first run: letter → name, letter never shows again
-        state.meta.seenLetter = true;
-        saveStore();
-        showView("name");
-      } else {
-        showView("ask");
-      }
+    /* the app opens on the ask view; a first-time visitor meets the name
+       prompt first (it is itself the first question the fox asks). */
+    function homeView() {
+      return state.meta.seenLetter ? "ask" : "name";
     }
 
     /* ---------- greeting ---------- */
@@ -337,12 +329,11 @@ if (typeof document !== "undefined") {
     function boot() {
       loadStore();
 
-      // letter / begin
+      // brand mark → home
       var navHome = $("nav-home");
       navHome.addEventListener("click", function () {
-        showView(state.meta.seenLetter ? "ask" : "letter");
+        showView(homeView());
       });
-      $("btn-begin").addEventListener("click", enterAppFlow);
 
       // nav
       $("nav-book").addEventListener("click", function () { showView("book"); });
@@ -353,6 +344,7 @@ if (typeof document !== "undefined") {
         e.preventDefault();
         var v = $("name-input").value.trim();
         state.meta.name = v.slice(0, 40);
+        state.meta.seenLetter = true;   // first run is complete from here
         saveStore();
         var g = $("ask-greeting");
         g.textContent = firstName() ? "Hello, " + firstName() + "." : timeGreeting();
@@ -414,7 +406,7 @@ if (typeof document !== "undefined") {
 
       // about
       $("btn-about-back").addEventListener("click", function () {
-        showView(state.meta.seenLetter ? "ask" : "letter");
+        showView(homeView());
       });
       $("toggle-reversals").addEventListener("change", function (e) {
         state.meta.reversals = e.target.checked;
@@ -422,8 +414,8 @@ if (typeof document !== "undefined") {
         syncSpreadReversalNote();
       });
 
-      // boot view
-      showView(state.meta.seenLetter ? "ask" : "letter");
+      // boot view — no letter screen any more; straight into the reading flow
+      showView(homeView());
     }
 
     if (document.readyState === "loading") {

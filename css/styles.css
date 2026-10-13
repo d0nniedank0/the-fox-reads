@@ -153,29 +153,6 @@ h1 {
 
 /* ---------- letter ---------- */
 
-#view-letter {
-  max-width: 900px;
-  padding-top: 26px;
-  display: grid;
-  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
-  gap: 30px;
-  align-items: center;
-}
-
-.letter-plate {
-  background: linear-gradient(160deg, #f6efe0, #eee6d2);
-  border-radius: 6px;
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.5),
-    0 2px 0 rgba(255, 255, 255, 0.06) inset;
-  padding: 0;
-  overflow: hidden;
-  transform: rotate(-0.7deg);
-}
-.letter-fox { display: block; width: 100%; height: auto; }
-
-.letter-text { max-width: 44ch; }
-
 .letter-sign { color: var(--bone); margin-top: 18px; }
 
 /* ---------- forms ---------- */
@@ -566,8 +543,6 @@ textarea::placeholder, input[type="text"]::placeholder { color: rgba(168, 164, 1
 /* ---------- responsive ---------- */
 
 @media (max-width: 760px) {
-  #view-letter { grid-template-columns: 1fr; }
-  .letter-plate { max-width: 340px; }
   .cards { gap: 16px; }
 }
 
@@ -648,16 +623,3 @@ textarea::placeholder, input[type="text"]::placeholder { color: rgba(168, 164, 1
   .moon-disc { width: 190px; height: 190px; top: -50px; right: -60px; }
 }
 
-/* ---------- letter on a dark translucent card ---------- */
-
-.letter-card {
-  background: rgba(18, 17, 31, 0.62);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--hairline);
-  border-radius: 12px;
-  padding: 30px 32px 32px;
-  box-shadow: var(--shadow);
-}
-.letter-card .kicker { margin-top: 0; }
-.letter-card .lede, .letter-card p { max-width: 44ch; }

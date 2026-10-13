@@ -50,33 +50,28 @@ function visible(w, id) {
 }
 
 (async function main() {
-  /* ---------- fresh user: letter shows ---------- */
+  /* ---------- fresh user: no letter screen, straight into the flow ---------- */
   {
     const { dom, errors } = makeDom();
     const w = dom.window;
     await new Promise(r => setTimeout(r, 30));
     const doc = w.document;
-    ok(!doc.getElementById("view-letter").classList.contains("hidden"), "letter shows on first run");
-    ok(doc.getElementById("view-name").classList.contains("hidden"), "name hidden on first run");
-    ok(doc.querySelector(".masthead").classList.contains("hidden"), "masthead hidden on letter view");
-    ok(doc.getElementById("btn-begin") !== null, "begin button present");
-
-    // begin → name
-    doc.getElementById("btn-begin").click();
-    ok(!doc.getElementById("view-name").classList.contains("hidden"), "begin → name view");
-    ok(doc.querySelector(".masthead").classList.contains("hidden") === false, "masthead visible after letter");
+    ok(doc.getElementById("view-letter") === null, "no letter view exists at all");
+    ok(doc.getElementById("btn-begin") === null, "no begin button");
+    ok(!doc.getElementById("view-name").classList.contains("hidden"), "first run opens on the name question");
+    ok(doc.querySelector(".masthead").classList.contains("hidden") === false, "masthead visible on entry");
 
     // name (blank allowed) → ask
     doc.getElementById("name-form").dispatchEvent(new w.Event("submit", { bubbles: true, cancelable: true }));
     ok(!doc.getElementById("view-ask").classList.contains("hidden"), "name submit → ask view");
 
-    // letter stored: reload must skip letter
+    // first run recorded so the name prompt never returns
     const saved = w.localStorage.getItem("foxreads.v1");
-    ok(saved && JSON.parse(saved).meta.seenLetter === true, "seenLetter persisted");
+    ok(saved && JSON.parse(saved).meta.seenLetter === true, "first run recorded");
     ok(errors.length === 0, "zero console errors (fresh flow): " + errors.join("; "));
   }
 
-  /* ---------- returning user: skips letter, full draw flow ---------- */
+  /* ---------- returning user: straight to ask, full draw flow ---------- */
   {
     const { dom, errors } = makeDom({
       "foxreads.v1": JSON.stringify({ meta: { seenLetter: true, name: "", reversals: false }, readings: [], schemaVersion: 1 })
@@ -84,7 +79,7 @@ function visible(w, id) {
     const w = dom.window;
     await new Promise(r => setTimeout(r, 30));
     const doc = w.document;
-    ok(!doc.getElementById("view-ask").classList.contains("hidden"), "returning user → ask (no letter)");
+    ok(!doc.getElementById("view-ask").classList.contains("hidden"), "returning user → ask");
 
     // ask (with question) → spread
     doc.getElementById("question-input").value = "what is happening with my work";
@@ -159,7 +154,7 @@ function visible(w, id) {
     await new Promise(r => setTimeout(r, 30));
     const doc = w.document;
 
-    ok(!doc.getElementById("view-ask").classList.contains("hidden"), "restart → ask, no letter (letter never twice)");
+    ok(!doc.getElementById("view-ask").classList.contains("hidden"), "restart → ask (name prompt never returns)");
     ok(doc.getElementById("ask-greeting").textContent.includes("Hello, Test."), "greeting uses stored name"); // name prompt was saved earlier in flow
 
     // book shows the seeded reading
@@ -191,7 +186,7 @@ function visible(w, id) {
       while ((m = re.exec(src))) refs.add(m[1]);
     }
     // dynamic concat refs
-    for (const v of ["letter","name","ask","spread","shuffle","reading","book","about"]) refs.add("view-" + v);
+    for (const v of ["name","ask","spread","shuffle","reading","book","about"]) refs.add("view-" + v);
     const missing = [...refs].filter(id => !/id=""/.test(RAW) && !new RegExp('id="' + id + '"').test(RAW));
     ok(missing.length === 0, "all JS-referenced ids exist in HTML" + (missing.length ? " — missing: " + missing.join(",") : ""));
   }
