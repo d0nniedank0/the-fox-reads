@@ -269,6 +269,21 @@ textarea::placeholder, input[type="text"]::placeholder { color: rgba(168, 164, 1
 .fox-anchor { display: flex; justify-content: center; margin: 6px 0 10px; }
 .fox-small { width: 108px; height: auto; opacity: 0.92; }
 
+.deck-fox-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 26px;
+  margin: 26px auto 8px;
+}
+.deck-fox {
+  width: 132px;
+  height: auto;
+  opacity: 0.95;
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.4));
+  animation: breathe 5.5s ease-in-out infinite;
+}
+
 .deck-stack {
   position: relative;
   width: 190px;
@@ -339,11 +354,12 @@ textarea::placeholder, input[type="text"]::placeholder { color: rgba(168, 164, 1
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 26px;
   margin: 8px 0 30px;
 }
-#view-reading .cards:has(.card:nth-child(2)) { max-width: 760px; }
+#view-reading .cards { max-width: 1080px; }
+#view-reading .cards:has(.card:nth-child(4)) { max-width: 980px; }
 
 .card {
   background: var(--paper);
@@ -355,10 +371,10 @@ textarea::placeholder, input[type="text"]::placeholder { color: rgba(168, 164, 1
 
 .card img {
   display: block;
-  width: 78%;
-  margin: 6% auto 0;
-  border-radius: 3px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  margin: 0;
+  border-radius: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 .card.reversed img { transform: rotate(180deg); }
 .card.reversed img { transition: transform 0.5s ease; }
@@ -531,3 +547,24 @@ textarea::placeholder, input[type="text"]::placeholder { color: rgba(168, 164, 1
 .footer-disclaim { font-size: 14px; }
 .deck-label, .hint, .shuffle-state, .book-entry .entry-date { font-size: 14px; }
 .card-pos { font-size: 14px; }
+
+
+/* ---------- CHΛOS signatures: sans wherever the mark appears ---------- */
+
+.chaos-sig,
+.letter-sign strong {
+  font-family: var(--sans);
+  font-size: 15.5px;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+
+.chaos-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--hairline);
+}
+.chaos-link:hover {
+  color: var(--bone);
+  border-bottom-color: var(--vermilion);
+}

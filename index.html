@@ -80,7 +80,7 @@
           <div class="btn-row">
             <button id="btn-ask-continue" class="btn btn-indigo" type="submit">Choose a spread</button>
           </div>
-          <p class="hint">Optional. But you knew that.</p>
+          <p class="hint">This part is optional.</p>
         </form>
       </div>
     </section>
@@ -112,17 +112,17 @@
     <section id="view-shuffle" class="view hidden" aria-labelledby="shuffle-heading">
       <div class="view-inner narrow">
         <h1 id="shuffle-heading" class="visually-hidden">Shuffle</h1>
-        <div class="fox-anchor">
-          <img id="shuffle-fox" class="fox-small" src="assets/fox-night.png" alt="" aria-hidden="true">
-        </div>
         <p class="lede center">Hold your question in your mind while you shuffle.</p>
-        <div id="deck-stack" class="deck-stack" role="button" tabindex="0"
-             aria-label="Press and hold to shuffle. Release when it feels like time."
-             aria-pressed="false">
-          <div class="deck-card deck-card-3"></div>
-          <div class="deck-card deck-card-2"></div>
-          <div class="deck-card deck-card-1"></div>
-          <span id="deck-label" class="deck-label">press & hold</span>
+        <div class="deck-fox-row">
+          <img id="deck-fox" class="deck-fox" src="assets/fox-night.png" alt="" aria-hidden="true">
+          <div id="deck-stack" class="deck-stack" role="button" tabindex="0"
+               aria-label="Press and hold to shuffle. Release when it feels like time."
+               aria-pressed="false">
+            <div class="deck-card deck-card-3"></div>
+            <div class="deck-card deck-card-2"></div>
+            <div class="deck-card deck-card-1"></div>
+            <span id="deck-label" class="deck-label">press &amp; hold</span>
+          </div>
         </div>
         <p id="shuffle-state" class="shuffle-state" role="status">&hellip;</p>
         <button id="btn-draw" class="btn btn-vermilion hidden" type="button">Draw</button>
@@ -198,8 +198,8 @@
   </main>
 
   <footer class="site-footer">
-    <p>&mdash; read by kind hands. Made by <strong>CH&Lambda;OS</strong>, 2026.</p>
-    <p class="footer-disclaim">It can&rsquo;t see the future. It just pays attention.</p>
+    <p>&mdash; read by kind hands. Made by <a class="chaos-link" href="https://x.com/daanisharif" target="_blank" rel="noopener noreferrer"><strong class="chaos-sig">CH&Lambda;OS</strong></a>, 2026.</p>
+    <p class="footer-disclaim">It can&rsquo;t see the future. It only helps you look inside yourself.</p>
   </footer>
 
   <script src="js/engine.js" defer></script>
