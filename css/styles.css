@@ -316,12 +316,21 @@ textarea::placeholder, input[type="text"]::placeholder { color: rgba(168, 164, 1
   position: absolute;
   inset: 0;
   margin: auto;
-  width: 62%;
-  height: 62%;
+  width: 56%;
+  height: 56%;
   color: var(--indigo-deep);
   pointer-events: none;
+  opacity: 0.92;
 }
-.deck-card-3 .card-fox { top: 8%; }
+
+/* classic card-back frame on every card in the stack */
+.deck-card::after {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border: 1px solid rgba(37, 35, 107, 0.22);
+  border-radius: 6px;
+}
 
 .deck-card-1 { transform: translate(0,0) rotate(0deg); z-index: 3; }
 .deck-card-2 { transform: translate(7px, -5px) rotate(2.2deg); z-index: 2; }
