@@ -270,8 +270,7 @@ if (typeof document !== "undefined") {
         question: reading.question,
         drawnIds: drawnIds,
         history: history,
-        rng: rng,
-        shuffleMs: typeof shuffle.heldMs === "number" ? shuffle.heldMs : null
+        rng: rng
       });
 
       state.cycleOrder = reading.remaining && reading.remaining.length ? reading.remaining : null;

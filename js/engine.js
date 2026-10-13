@@ -228,14 +228,6 @@ const FOX_ASIDES = {
   repeat: [
     "That card\u2019s back. I\u2019m not saying anything. I\u2019m writing it down.",
     "Again with this card. Ask it differently next time."
-  ],
-  longShuffle: [
-    "You shuffled for a long time. I noticed.",
-    "A long shuffle. Either the question matters or it\u2019s hard to hold."
-  ],
-  shortShuffle: [
-    "Quick hands. The cards had no time to complain.",
-    "That was a fast shuffle. I hope the question was easy."
   ]
 };
 
@@ -303,7 +295,6 @@ function foxAside(opts) {
   const drawnIds   = opts.drawnIds || [];
   const history    = opts.history || [];
   const rng        = opts.rng || Math.random;
-  const shuffleMs  = typeof opts.shuffleMs === "number" ? opts.shuffleMs : null;
 
   const pool = [];
 
@@ -321,10 +312,6 @@ function foxAside(opts) {
     if (drawnIds.some(id => past.has(id))) pool.push(...FOX_ASIDES.repeat);
   }
 
-  if (shuffleMs !== null) {
-    if (shuffleMs > 45000) pool.push(...FOX_ASIDES.longShuffle);
-    else if (shuffleMs < 8000) pool.push(...FOX_ASIDES.shortShuffle);
-  }
 
   const effective = pool.length ? pool : FOX_ASIDES.general.slice();
   // dedupe scoped+general overlap is unnecessary (general only joins when pool empty)

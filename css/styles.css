@@ -461,13 +461,17 @@ textarea::placeholder, input[type="text"]::placeholder { color: rgba(168, 164, 1
   border-radius: 12px;
   padding: 16px 20px;
 }
+.aside-body { flex: 1; min-width: 0; }
 .aside-text {
   font-family: var(--body-serif);
   font-style: italic;
-  font-size: 16.5px;
-  color: var(--bone);
-  margin: 0;
+  font-size: 16px;
+  color: var(--bone-dim);
+  margin: 10px 0 0;
+  border-top: 1px solid var(--hairline);
+  padding-top: 10px;
 }
+.aside-block .synth { font-size: 16.5px; }
 .aside-block .fox-small { width: 84px; flex: 0 0 84px; opacity: 0.95; margin: 0; }
 
 /* ---------- book ---------- */
