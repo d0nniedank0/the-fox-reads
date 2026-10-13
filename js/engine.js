@@ -41,7 +41,7 @@ const CARDS = [
   {
     id: "the-empress", name: "The Empress", numeral: "III",
     img: "assets/rws/03-the-empress.jpg",
-    upright: "Something is growing and you didn\u2019t do much to cause it. That makes people nervous, so they intervene. Don\u2019t. This is one of the few cards where the correct move is to leave it alone and go do something else.",
+    upright: "Something is growing and you didn\u2019t do much to cause it. That makes people nervous, so they intervene \u2014 water it twice, repot it, dig it up to check the roots. Don\u2019t. The work this card describes stops when you watch it. Go be somewhere else for a while.",
     reversed: "Same growth, choked. Usually because someone is standing over it checking daily. Often that someone is you.",
     keywords: ["growth", "patience", "leaving it alone"]
   },
@@ -49,7 +49,7 @@ const CARDS = [
     id: "the-emperor", name: "The Emperor", numeral: "IV",
     img: "assets/rws/04-the-emperor.jpg",
     upright: "Structure, rules, the wall that keeps the thing safe. Reads as boring and it\u2019s the reason anything survives long enough to be worth protecting. Where\u2019s the wall here? If the answer is \u201cthere isn\u2019t one,\u201d that\u2019s the reading.",
-    reversed: "Rigid, controlling, or a throne with nobody sitting on it. Either way the structure is doing less than it looks like it\u2019s doing.",
+    reversed: "The structure is still standing and it\u2019s hollow. Either nobody\u2019s enforcing it, or somebody\u2019s enforcing it for the feeling. Same card. The tell is asking what the wall is protecting and getting a shrug.",
     keywords: ["structure", "boundaries", "authority"]
   },
   {
@@ -70,7 +70,7 @@ const CARDS = [
     id: "the-chariot", name: "The Chariot", numeral: "VII",
     img: "assets/rws/07-the-chariot.jpg",
     upright: "Forward motion on willpower, and the card is honest that it\u2019s willpower and not a plan. Hard rule attached: you can drive it, or you can lose it. Not much in between.",
-    reversed: "Same drive, wheels not touching the road. Going hard in a direction you haven\u2019t checked. Slowing down feels like failure and it\u2019s the only move available.",
+    reversed: "Same drive, and the wheels aren\u2019t touching the road. The engine\u2019s loud, the scenery isn\u2019t changing. Speed in the wrong direction still counts as the wrong direction. Check the map before you check the throttle.",
     keywords: ["drive", "momentum", "control"]
   },
   {
@@ -98,7 +98,7 @@ const CARDS = [
     id: "justice", name: "Justice", numeral: "XI",
     img: "assets/rws/11-justice.jpg",
     upright: "Cause and effect, applied honestly. There\u2019s no comfort in it. This usually shows up when you already know the answer is fair and you don\u2019t like it.",
-    reversed: "Something is being decided with one side missing. Yours or theirs \u2014 check which.",
+    reversed: "A decision is being made with the file half-empty. You don\u2019t know what\u2019s in the other half, and neither does whoever\u2019s deciding. The card isn\u2019t saying fight it \u2014 it\u2019s saying nobody in the room has seen the whole thing, including the person holding the gavel.",
     keywords: ["cause and effect", "fairness", "the fair answer"]
   },
   {
@@ -153,7 +153,7 @@ const CARDS = [
   {
     id: "the-sun", name: "The Sun", numeral: "XIX",
     img: "assets/rws/19-the-sun.jpg",
-    upright: "The rare card with nothing hidden. Things are fine, plainly, and the correct response is to say so out loud instead of waiting for the catch. If you\u2019ve been braced for the catch for weeks, that\u2019s worth noticing too.",
+    upright: "The rare card with nothing hidden. Things are fine, and there\u2019s no catch coming. I know how that reads. If you\u2019ve been braced for weeks, noticing how long you\u2019ve been braced is the actual reading \u2014 the card is just confirming the sun is out.",
     reversed: "Something good is happening and you\u2019re not in it. Either too tired to feel it or you\u2019ve decided you don\u2019t deserve it. Both fixable. Neither automatic.",
     keywords: ["plain good", "no catch", "allowed"]
   },

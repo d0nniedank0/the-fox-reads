@@ -93,12 +93,12 @@ Written in the author's voice. Ship-ready as drafted; the author still reads it 
 **Reversed.** You're ignoring something you already know and calling it patience. It isn't patience.
 
 **III · The Empress** — `growth, patience, leaving it alone`
-**Upright.** Something is growing and you didn't do much to cause it. That makes people nervous, so they intervene. Don't. This is one of the few cards where the correct move is to leave it alone and go do something else.
+**Upright.** Something is growing and you didn't do much to cause it. That makes people nervous, so they intervene — water it twice, repot it, dig it up to check the roots. Don't. The work this card describes stops when you watch it. Go be somewhere else for a while.
 **Reversed.** Same growth, choked. Usually because someone is standing over it checking daily. Often that someone is you.
 
 **IV · The Emperor** — `structure, boundaries, authority`
 **Upright.** Structure, rules, the wall that keeps the thing safe. Reads as boring and it's the reason anything survives long enough to be worth protecting. Where's the wall here? If the answer is "there isn't one," that's the reading.
-**Reversed.** Rigid, controlling, or a throne with nobody sitting on it. Either way the structure is doing less than it looks like it's doing.
+**Reversed.** The structure is still standing and it's hollow. Either nobody's enforcing it, or somebody's enforcing it for the feeling. Same card. The tell is asking what the wall is protecting and getting a shrug.
 
 **V · The Hierophant** — `inherited rules, institutions, asking why`
 **Upright.** Inherited rules. Somebody else's answer to your question, handed down and never checked. The card isn't telling you to obey them — it's telling you they're in the room. Ask who wrote them.
@@ -110,7 +110,7 @@ Written in the author's voice. Ship-ready as drafted; the author still reads it 
 
 **VII · The Chariot** — `drive, momentum, control`
 **Upright.** Forward motion on willpower, and the card is honest that it's willpower and not a plan. Hard rule attached: you can drive it, or you can lose it. Not much in between.
-**Reversed.** Same drive, wheels not touching the road. Going hard in a direction you haven't checked. Slowing down feels like failure and it's the only move available.
+**Reversed.** Same drive, and the wheels aren't touching the road. The engine's loud, the scenery isn't changing. Speed in the wrong direction still counts as the wrong direction. Check the map before you check the throttle.
 
 **VIII · Strength** — `restraint, calm, not flinching`
 **Upright.** Not force. It's a person handling something that could hurt them, calmly, and the calm is the strength — everyone wants this card to be about power. It's about not flinching.
@@ -126,7 +126,7 @@ Written in the author's voice. Ship-ready as drafted; the author still reads it 
 
 **XI · Justice** — `cause and effect, fairness, the fair answer`
 **Upright.** Cause and effect, applied honestly. There's no comfort in it. This usually shows up when you already know the answer is fair and you don't like it.
-**Reversed.** Something is being decided with one side missing. Yours or theirs — check which.
+**Reversed.** A decision is being made with the file half-empty. You don't know what's in the other half, and neither does whoever's deciding. The card isn't saying fight it — it's saying nobody in the room has seen the whole thing, including the person holding the gavel.
 
 **XII · The Hanged Man** — `suspension, perspective, voluntary waiting`
 **Upright.** Suspended, and it's voluntary — that's the whole distinction from every other stuck card. Nothing is happening on purpose, and the point is the view from upside down. You see the thing differently or you don't. Waiting without looking at it is just waiting.
@@ -157,7 +157,7 @@ Written in the author's voice. Ship-ready as drafted; the author still reads it 
 **Reversed.** The fog lifts. What's underneath is usually smaller than you feared, which is its own mild disappointment and much easier to work with.
 
 **XIX · The Sun** — `plain good, no catch, allowed`
-**Upright.** The rare card with nothing hidden. Things are fine, plainly, and the correct response is to say so out loud instead of waiting for the catch. If you've been braced for the catch for weeks, that's worth noticing too.
+**Upright.** The rare card with nothing hidden. Things are fine, and there's no catch coming. I know how that reads. If you've been braced for weeks, noticing how long you've been braced is the actual reading — the card is just confirming the sun is out.
 **Reversed.** Something good is happening and you're not in it. Either too tired to feel it or you've decided you don't deserve it. Both fixable. Neither automatic.
 
 **XX · Judgement** — `the call, answering, self-reckoning`
