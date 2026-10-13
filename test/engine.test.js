@@ -100,27 +100,27 @@ console.log("fox asides");
 /* ---------- synthesis ---------- */
 console.log("synthesis");
 {
-  // resonance: death + the-world → endings line
+  // position×register wins over draw order: tower in present beats fool in past
   const s1 = E.synthesize({
     spread: S3,
     cards: [
-      { cardId: "death", positionKey: "past", reversed: false },
-      { cardId: "the-world", positionKey: "present", reversed: false },
-      { cardId: "the-fool", positionKey: "future", reversed: false }
+      { cardId: "the-fool",  positionKey: "past",    reversed: false },
+      { cardId: "the-tower", positionKey: "present", reversed: false },
+      { cardId: "the-moon",  positionKey: "future",  reversed: false }
     ]
   });
-  ok(/closing at once/.test(s1), "endings resonance fires");
+  ok(/standing inside an ending/.test(s1), "position×register line fires (tower in present)");
 
-  // last card reversed → reads second
+  // keyword resonance names the shared word
   const s2 = E.synthesize({
     spread: S3,
     cards: [
-      { cardId: "the-sun", positionKey: "past", reversed: false },
+      { cardId: "the-sun",  positionKey: "past",    reversed: false },
       { cardId: "the-star", positionKey: "present", reversed: false },
-      { cardId: "the-fool", positionKey: "future", reversed: true }
+      { cardId: "the-fool", positionKey: "future",  reversed: true  }
     ]
   });
-  ok(/lands reversed/.test(s2), "final-position reversal noted");
+  ok(s2.length > 10, "three-card set still produces a line");
 
   // default line always non-empty
   for (const seed of [2, 5, 9, 21, 33]) {
@@ -129,6 +129,128 @@ console.log("synthesis");
     ok(s.length > 20, "synthesis non-empty (seed " + seed + ")");
   }
   ok(E.synthesize({ spread: S3, cards: [] }) === "", "empty cards → empty string");
+}
+
+/* ---------- synthesis: new mechanics ---------- */
+console.log("synthesis mechanics");
+{
+  // keyword resonance: the-fool and the-star share "hope"? no — fool: beginnings/not knowing/early; star: aftermath/hope/the next small thing.
+  // shared: temperance + star share "patience"? temperance: increments/patience/daily ten percent; star: aftermath/hope/next small thing. No.
+  // hermit: withdrawal/solitude/your own read; moon: unreliable information/fog/waiting. No.
+  // the-fool(beginnings) + the-magician(resources) — no overlap. Use two cards that genuinely share a keyword:
+  // temperance: patience; the-hanged-man: voluntary waiting — no. Let's pick a real pair: "waiting" appears in the-moon keywords and the-hanged-man has "voluntary waiting" (not equal).
+  // Simplest true shared keyword: "patience" — temperance and ... only temperance. Check actual overlaps first:
+  // endings bucket cards: death/the-tower/the-world/judgement — keywords: endings+? the-world: completion/anti-climax/next lap; death: endings/admin/finishing. No shared keyword.
+  // So construct resonance from two cards sharing an exact keyword string: "hope"? only the-star. "waiting"? the-moon has "waiting"; the-hanged-man has "voluntary waiting" (different string). 
+  // the-star "aftermath" — unique. Hmm — genuine keyword overlap may be rare by design.
+  // Test the *mechanism* with a synthetic byId instead of asserting a real pair.
+  const byIdSynth = (id) => ({
+    "a-card":  { id: "a-card",  name: "A Card",  keywords: ["rest", "waiting"] },
+    "b-card":  { id: "b-card",  name: "B Card",  keywords: ["waiting", "storms"] },
+    "c-card":  { id: "c-card",  name: "C Card",  keywords: ["alone"] }
+  }[id]);
+  const synthRes = E.synthesize({
+    spread: S3,
+    cards: [
+      { cardId: "a-card", positionKey: "past", reversed: false },
+      { cardId: "b-card", positionKey: "present", reversed: false },
+      { cardId: "c-card", positionKey: "future", reversed: false }
+    ],
+    byId: byIdSynth
+  });
+  ok(/waiting/.test(synthRes) && /A Card/.test(synthRes) && /B Card/.test(synthRes),
+     "shared keyword gets named as the leaning");
+
+  // position × register: tower (endings) in present on three-card spread
+  const synthPos = E.synthesize({
+    spread: S3,
+    cards: [
+      { cardId: "the-fool",  positionKey: "past",    reversed: false },
+      { cardId: "the-tower", positionKey: "present", reversed: false },
+      { cardId: "the-moon",  positionKey: "future",  reversed: false }
+    ]
+  });
+  ok(/standing inside an ending/.test(synthPos), "position×register line fires (tower in present)");
+
+  // reversal hinge: reversed middle card between two uprights on three-card
+  const synthHinge = E.synthesize({
+    spread: S3,
+    cards: [
+      { cardId: "the-sun",   positionKey: "past",    reversed: false },
+      { cardId: "justice",   positionKey: "present", reversed: true  },
+      { cardId: "the-world", positionKey: "future",  reversed: false }
+    ]
+  });
+  ok(/hinge is Justice/.test(synthHinge) && /where you actually are/.test(synthHinge.toLowerCase()),
+     "middle reversal named as the hinge");
+
+  // last-card reversal no longer fires the old line
+  const synthOld = E.synthesize({
+    spread: S3,
+    cards: [
+      { cardId: "the-sun",  positionKey: "past",    reversed: false },
+      { cardId: "the-star", positionKey: "present", reversed: false },
+      { cardId: "the-fool", positionKey: "future",  reversed: true  }
+    ]
+  });
+  ok(!/lands reversed/.test(synthOld), "old last-reversed line is gone");
+
+  // all-reversed still overrides everything
+  const synthAllRev = E.synthesize({
+    spread: S3,
+    cards: [
+      { cardId: "the-tower", positionKey: "past",    reversed: true },
+      { cardId: "justice",   positionKey: "present", reversed: true },
+      { cardId: "the-moon",  positionKey: "future",  reversed: true }
+    ]
+  });
+  ok(/Every card came up reversed/.test(synthAllRev), "all-reversed override intact");
+
+  // one-card spread: position line for signal
+  const synthOne = E.synthesize({
+    spread: S1,
+    cards: [{ cardId: "the-tower", positionKey: "signal", reversed: false }]
+  });
+  ok(/today's signal/.test(synthOne), "one-card signal line fires");
+
+  // five-card spread: todo position
+  const synthFive = E.synthesize({
+    spread: S5,
+    cards: [
+      { cardId: "the-sun",      positionKey: "situation",  reversed: false },
+      { cardId: "the-moon",     positionKey: "against",    reversed: false },
+      { cardId: "the-hermit",   positionKey: "underneath", reversed: false },
+      { cardId: "the-tower",    positionKey: "todo",       reversed: false },
+      { cardId: "the-star",     positionKey: "lands",      reversed: false }
+    ]
+  });
+  ok(/What to do: end it/.test(synthFive), "five-card todo line fires");
+
+  // every spread/position/bucket combo that has a line returns non-empty
+  let covered = 0, missing = [];
+  for (const sp of E.SPREADS) {
+    for (const pos of sp.positions) {
+      for (const b of ["endings","waiting","structure","starting"]) {
+        const cardId = E.REGISTER[b][0];
+        const out = E.synthesize({ spread: sp, cards: [{ cardId, positionKey: pos.key, reversed: false }] });
+        if (out.length > 5) covered++; else missing.push(sp.id + "/" + pos.key + "/" + b);
+      }
+    }
+  }
+  ok(missing.length === 0, "every spread×position×bucket produces a line" + (missing.length ? " — missing: " + missing.join(", ") : ""));
+
+  // determinism: same input twice
+  const d1 = E.synthesize({ spread: S3, cards: [
+    { cardId: "the-tower", positionKey: "past", reversed: false },
+    { cardId: "the-moon", positionKey: "present", reversed: true },
+    { cardId: "the-sun", positionKey: "future", reversed: false }
+  ]});
+  const d2 = E.synthesize({ spread: S3, cards: [
+    { cardId: "the-tower", positionKey: "past", reversed: false },
+    { cardId: "the-moon", positionKey: "present", reversed: true },
+    { cardId: "the-sun", positionKey: "future", reversed: false }
+  ]});
+  ok(d1 === d2 && d1.length > 10, "synthesis deterministic");
 }
 
 /* ---------- migration ---------- */

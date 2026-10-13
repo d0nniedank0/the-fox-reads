@@ -334,6 +334,81 @@ function bucketOf(cardId) {
   return null;
 }
 
+/* ---------- position × register tension lines ---------- */
+/* Per-position reading when a card from a register lands there.
+   Written to be read as the fox speaking about the position,
+   not as a template with the card name dropped in. */
+const POSITION_READS = {
+  one: {
+    signal: {
+      endings:   "One card about endings as today's signal: whatever's finishing, let it finish. Don't rehearse the sequel yet.",
+      waiting:   "One card about waiting as today's signal: the day is not asking for your decision. Spend it noticing instead.",
+      structure: "One card about structure as today's signal: the useful move today is boring. Do the boring thing.",
+      starting:  "One card about beginnings as today's signal: start the thing. Badly, if needed — the card doesn't care."
+    }
+  },
+  three: {
+    past: {
+      endings:   "In the past: something already ended, and this whole question is happening in its shadow.",
+      waiting:   "In the past: a long stretch of waiting is what set this up. You're not starting from zero — you're starting from patient.",
+      structure: "In the past: a structure did this. A rule, a role, a wall someone built — maybe you. It got you here.",
+      starting:  "In the past: this began as a beginning — a leap, a tool picked up, something started before it was ready."
+    },
+    present: {
+      endings:   "In the present: you are standing inside an ending. Right now, not approaching it.",
+      waiting:   "In the present: you're in a waiting room. The card isn't being poetic — this week is literally a wait.",
+      structure: "In the present: the question you're asking is currently a question about rules. Notice that.",
+      starting:  "In the present: you're early. The thing you're asking about hasn't decided what it is yet — and neither have you."
+    },
+    future: {
+      endings:   "Where it's heading: an ending. The useful question is what you're willing to have end well.",
+      waiting:   "Where it's heading: more waiting, then a turn. Plan for the turn, not for the wait to stop.",
+      structure: "Where it's heading: this settles into a structure — something with rules you'll be asked to keep or break.",
+      starting:  "Where it's heading: a new start. Not a resolution — a door."
+    }
+  },
+  five: {
+    situation: {
+      endings:   "The situation as it stands: something is ending whether you participate or not.",
+      waiting:   "The situation as it stands: it is, currently, a waiting game — even if it doesn't feel like one.",
+      structure: "The situation as it stands: this is a structure question. The rules in play are the situation.",
+      starting:  "The situation as it stands: it's earlier than you think. The situation hasn't committed to being anything yet."
+    },
+    against: {
+      endings:   "Working against you: the part that's already over. Fighting it is what's costing you.",
+      waiting:   "Working against you: your own patience — or someone else's timing. The delay is the opponent.",
+      structure: "Working against you: the rules. Somebody's structure, possibly yours, is doing the resisting.",
+      starting:  "Working against you: the pull to start over instead of finishing this. New is easier than done."
+    },
+    underneath: {
+      endings:   "Underneath it: an ending you haven't said out loud. The surface question is rent for the real one.",
+      waiting:   "Underneath it: you're waiting for permission. From whom is worth asking.",
+      structure: "Underneath it: a rule you absorbed so long ago it feels like a fact. It isn't.",
+      starting:  "Underneath it: you want to start. The hesitation isn't the feeling — the wanting is."
+    },
+    todo: {
+      endings:   "What to do: end it. Cleanly, on purpose, before it ends you instead.",
+      waiting:   "What to do: wait. Not passively — watchfully. There's a difference and the card cares which you pick.",
+      structure: "What to do: build the wall. Name the rule. Write it down somewhere you'll see it.",
+      starting:  "What to do: begin. The card is not more complicated than that."
+    },
+    lands: {
+      endings:   "Where it lands: over. Which is not the same as badly — the card isn't promising grief, it's promising done.",
+      waiting:   "Where it lands: unresolved for now, and that's the landing. Live there a while.",
+      structure: "Where it lands: into a shape. Expect a rule, a role, a structure you can lean on or push against.",
+      starting:  "Where it lands: at the start of the next thing. The reading ends before the story does."
+    }
+  }
+};
+
+function positionRead(spread, positionKey, bucket) {
+  const table = POSITION_READS[spread.id];
+  if (!table) return null;
+  const perPos = table[positionKey];
+  if (!perPos) return null;
+  return perPos[bucket] || null;
+}
+
 function synthesize(opts) {
   const spread  = opts.spread;
   const cards   = opts.cards || [];     // [{cardId, reversed, positionKey}]
@@ -343,37 +418,70 @@ function synthesize(opts) {
   const lines = [];
   const n = cards.length;
 
-  // 1) bucket resonance (one line max, strongest bucket wins)
-  const buckets = {};
+  // 1) keyword resonance: a shared keyword across drawn cards, named plainly.
+  //    More honest than buckets — it names the actual shared word.
+  const kwCount = {};
+  const kwCards = {};
   for (const c of cards) {
-    const b = bucketOf(c.cardId);
-    if (b) (buckets[b] = buckets[b] || []).push(c);
+    const card = byId(c.cardId);
+    if (!card) continue;
+    for (const k of card.keywords || []) {
+      if (!kwCount[k]) { kwCount[k] = 0; kwCards[k] = []; }
+      kwCount[k]++;
+      kwCards[k].push(card.name);
+    }
   }
-  for (const b of Object.keys(buckets)) {
-    if (buckets[b].length >= 2) {
-      const names = buckets[b].map(c => byId(c.cardId).name);
-      const joined = names.length === 2 ? names.join(" and ") : names.join(", ");
-      if (b === "endings")   lines.push(joined + " in one reading is a lot of things closing at once. Let them.");
-      if (b === "waiting")   lines.push(joined + " agree on one thing: this is not the moment to force it.");
-      if (b === "structure") lines.push(joined + " lean the same way \u2014 whatever you decide, it needs walls.");
-      if (b === "starting")  lines.push(joined + " point the same direction: forward, without a fully loaded plan.");
-      break; // intentionally: one resonance line per reading
+  let bestKw = null;
+  for (const k in kwCount) {
+    if (kwCount[k] >= 2 && (bestKw === null || kwCount[k] > kwCount[bestKw])) bestKw = k;
+  }
+  if (bestKw) {
+    const names = kwCards[bestKw];
+    lines.push(
+      "Both " + (names.length === 2 ? names.join(" and ") : listNames(names)) +
+      " are about " + bestKw + ". That's not a coincidence \u2014 that's the reading leaning."
+    );
+  }
+
+  // 2) position \u00d7 register: one line max, chosen by position priority —
+  //    advice/signal positions outrank context positions, so a "what to do"
+  //    card beats a "in the past" card when both have authored lines.
+  const POS_PRIORITY = { signal: 0, todo: 0, present: 1, situation: 1, lands: 2, future: 2, against: 3, underneath: 3, past: 4 };
+  let bestPosLine = null, bestPosRank = 99;
+  for (const c of cards) {
+    const bucket = bucketOf(c.cardId);
+    if (!bucket) continue;
+    const line = positionRead(spread, c.positionKey, bucket);
+    if (!line) continue;
+    const rank = POS_PRIORITY[c.positionKey] !== undefined ? POS_PRIORITY[c.positionKey] : 5;
+    if (rank < bestPosRank) { bestPosRank = rank; bestPosLine = line; }
+  }
+  if (bestPosLine) lines.push(bestPosLine);
+
+  // 3) reversal as hinge: a reversed card between uprights is the pivot.
+  if (n >= 3) {
+    for (let i = 1; i < n - 1; i++) {
+      if (cards[i].reversed && !cards[i-1].reversed && !cards[i+1].reversed) {
+        const c = byId(cards[i].cardId);
+        const posLabel = (spread.positions[i].label || "").toLowerCase();
+        lines.push(
+          "The hinge is " + c.name + " \u2014 the only reversed card, sitting on \u201c" + posLabel +
+          "\u201d between two uprights. That's where the reading turns. Read that one twice."
+        );
+        break;
+      }
     }
   }
 
-  // 2) a reversal in the final position reads second, from underneath
-  const last = cards[n - 1];
-  if (last && last.reversed) {
-    const posLabel = (spread.positions[n - 1].label || "").toLowerCase();
-    const c = byId(last.cardId);
-    lines.push("And " + c.name + " lands reversed on \u201c" + posLabel + "\u201d \u2014 same subject, from underneath. Read it second.");
-  }
-
-  // 3) all-reversed reading, or default hand-back
+  // 4) all-reversed reading stays (rare, blunt)
   const allReversed = cards.every(c => c.reversed);
   if (allReversed && n > 1) {
+    lines.length = 0;
     lines.push("Every card came up reversed. Either the deck is being blunt with you, or the read here is about the underside of things \u2014 start there.");
-  } else if (lines.length === 0) {
+  }
+
+  // 5) fallback: name the spread's arc plainly
+  if (lines.length === 0) {
     lines.push(defaultLine(spread, cards, byId));
   }
 
@@ -381,17 +489,19 @@ function synthesize(opts) {
 }
 
 function defaultLine(spread, cards, byId) {
+  // arc line: name the register movement across the spread
+  if (spread.id === "three" && cards.length === 3) {
+    const b0 = bucketOf(cards[0].cardId);
+    const b2 = bucketOf(cards[2].cardId);
+    if (b0 && b2 && b0 !== b2) {
+      return "As a set: " + b0 + " to " + b2 + ". The past and the future are speaking different languages \u2014 the present card is the translator.";
+    }
+  }
   const names = cards.map(c => {
     const card = byId(c.cardId);
     return card.name + (c.reversed ? " (reversed)" : "");
   });
-  return "As a set: " + listNames(names) + ". No hidden alliance between them \u2014 read each one where it sits.";
-}
-
-function listNames(names) {
-  if (names.length === 1) return names[0];
-  if (names.length === 2) return names[0] + " and " + names[1];
-  return names.slice(0, -1).join(", ") + ", and " + names[names.length - 1];
+  return "As a set: " + listNames(names) + ". Read each one where it sits \u2014 the positions are doing the talking here.";
 }
 
 /* ---------- store migration (day-one, PLAN §8) ---------- */
