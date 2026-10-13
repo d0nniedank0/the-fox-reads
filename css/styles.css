@@ -355,14 +355,20 @@ textarea::placeholder, input[type="text"]::placeholder { color: rgba(168, 164, 1
   margin: 0 0 26px;
 }
 
+/* Reading cards: equal widths, and a part-full last row CENTRES rather than
+   hugging the left (a 5-card read used to wrap 3 + 2 with the pair sitting
+   under cards 1 and 2). Flex + justify-content:center does that; the explicit
+   basis keeps every card the same width so the short row can't grow wider. */
 .cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 26px;
+  --card-gap: 26px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--card-gap);
   margin: 8px 0 30px;
 }
+.cards .card { flex: 0 0 calc((100% - (2 * var(--card-gap))) / 3); }
 #view-reading .cards { max-width: 1080px; }
-#view-reading .cards:has(.card:nth-child(4)) { max-width: 980px; }
 
 .card {
   background: var(--paper);
@@ -436,18 +442,37 @@ textarea::placeholder, input[type="text"]::placeholder { color: rgba(168, 164, 1
   margin: 0;
 }
 
+/* the four movements: segmented and labelled, never one flowing essay */
+.synth-movements { display: grid; gap: 18px; }
+.movement { border-left: 2px solid rgba(124, 130, 230, 0.35); padding-left: 14px; }
+.movement-label {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--vermilion);
+  margin: 0 0 5px;
+  font-weight: 500;
+}
+.movement .synth { font-size: 16.5px; line-height: 1.65; }
+
 .aside-block {
   display: flex;
-  gap: 16px;
-  align-items: center;
-  max-width: 640px;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: center;
+  max-width: 920px;
   margin: 26px auto 0;
   background: rgba(124, 130, 230, 0.08);
   border: 1px solid rgba(124, 130, 230, 0.3);
   border-radius: 12px;
-  padding: 16px 20px;
+  padding: 18px 24px;
 }
-.aside-body { flex: 1; min-width: 0; }
+/* The card is as wide as the reading column, but the prose is NOT — a 920px
+   line runs ~98 characters, well past the point where the eye loses its place
+   coming back. The fox carries the extra width instead, and the pair centres
+   so the slack is symmetric rather than a gap on one side. */
+.aside-body { flex: 0 1 auto; min-width: 0; max-width: 560px; }
 .aside-text {
   font-family: var(--body-serif);
   font-style: italic;
@@ -458,7 +483,7 @@ textarea::placeholder, input[type="text"]::placeholder { color: rgba(168, 164, 1
   padding-top: 10px;
 }
 .aside-block .synth { font-size: 16.5px; }
-.aside-block .fox-small { width: 84px; flex: 0 0 84px; opacity: 0.95; margin: 0; }
+.aside-block .fox-small { width: 160px; flex: 0 0 160px; opacity: 0.95; margin: 0; }
 
 /* ---------- book ---------- */
 
@@ -543,7 +568,17 @@ textarea::placeholder, input[type="text"]::placeholder { color: rgba(168, 164, 1
 /* ---------- responsive ---------- */
 
 @media (max-width: 760px) {
-  .cards { gap: 16px; }
+  .cards { --card-gap: 16px; }
+}
+
+/* three cards across stops fitting well before the reading column does */
+@media (max-width: 900px) {
+  .cards .card { flex: 0 0 calc((100% - var(--card-gap)) / 2); }
+}
+@media (max-width: 620px) {
+  .cards .card { flex: 0 0 100%; }
+  .aside-block { padding: 16px 18px; }
+  .aside-block .fox-small { width: 64px; flex: 0 0 64px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

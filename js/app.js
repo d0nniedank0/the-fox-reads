@@ -39,7 +39,7 @@ if (typeof document !== "undefined") {
         window.localStorage.setItem(STORE_KEY, JSON.stringify({
           meta: state.meta,
           readings: state.readings,
-          schemaVersion: 1
+          schemaVersion: engine.SCHEMA_VERSION
         }));
       } catch (e) { /* storage full/blocked: the reading still displays */ }
     }
@@ -231,16 +231,52 @@ if (typeof document !== "undefined") {
         wrap.appendChild(node);
       }
 
-      // synthesis
-      $("reading-synth").textContent = engine.synthesize({
+      // synthesis — labelled movements, each a different kind of claim.
+      // The memory line is already frozen on the reading (it reads the book,
+      // not the cards), so it is passed through rather than recomputed.
+      var syn = engine.synthesize({
         spread: spread,
         cards: reading.cards.map(function (c) {
           return { cardId: c.cardId, reversed: c.reversed, positionKey: c.positionKey };
         })
       });
+      syn.memory = reading.memory || "";
+      renderSynthesis(syn);
 
       // fox aside
       $("reading-aside").textContent = reading.foxAside || "";
+    }
+
+    /* the movements, in the order the reading makes them */
+    var MOVEMENTS = [
+      { key: "memory",  label: "Since last time" },
+      { key: "set",     label: "The set" },
+      { key: "tension", label: "Where they pull" },
+      { key: "turn",    label: "The turn" },
+      { key: "ask",     label: "What it asks" }
+    ];
+
+    function renderSynthesis(syn) {
+      var wrap = $("reading-synth");
+      if (!wrap) return;
+      wrap.innerHTML = "";
+      if (!syn) return;
+      for (var i = 0; i < MOVEMENTS.length; i++) {
+        var m = MOVEMENTS[i];
+        var text = syn[m.key];
+        if (!text) continue;
+        var block = document.createElement("div");
+        block.className = "movement";
+        var lab = document.createElement("p");
+        lab.className = "movement-label";
+        lab.textContent = m.label;
+        var body = document.createElement("p");
+        body.className = "synth";
+        body.textContent = text;
+        block.appendChild(lab);
+        block.appendChild(body);
+        wrap.appendChild(block);
+      }
     }
 
     function doDraw() {
@@ -256,14 +292,15 @@ if (typeof document !== "undefined") {
         order: state.cycleOrder ? state.cycleOrder.slice() : null
       });
 
-      var drawnIds = reading.cards.map(function (c) { return c.cardId; });
       var history = state.readings.slice();
       reading.foxAside = engine.foxAside({
         question: reading.question,
-        drawnIds: drawnIds,
-        history: history,
         rng: rng
       });
+      // Resolved against the book as it stood BEFORE this reading, then frozen
+      // onto the reading — a re-render must never recompute it against a book
+      // that now contains this drawing.
+      reading.memory = engine.crossReading({ cards: reading.cards, history: history }) || "";
 
       state.cycleOrder = reading.remaining && reading.remaining.length ? reading.remaining : null;
       state.readings.push(reading);

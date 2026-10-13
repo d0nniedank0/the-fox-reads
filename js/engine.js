@@ -224,11 +224,12 @@ const FOX_ASIDES = {
     "You asked about them and not about you. Interesting.",
     "This one is for you, not for them. You\u2019ll see.",
     "You put someone else at the centre of your own question. I\u2019m noting that."
-  ],
-  repeat: [
-    "That card\u2019s back. I\u2019m not saying anything. I\u2019m writing it down.",
-    "Again with this card. Ask it differently next time."
   ]
+  // The old `repeat` pool lived here: two lines the fox said whenever a drawn
+  // card had appeared in any earlier reading. It had no memory behind it — the
+  // same sentence for the second sighting and the tenth — and once real
+  // cross-reading detection existed it fired alongside it, restating the same
+  // observation. Cross-reading memory owns that claim now.
 };
 
 const THIRD_PERSON_HINTS = [
@@ -236,6 +237,51 @@ const THIRD_PERSON_HINTS = [
   "are they", "do they", "about him", "about her", "about them", "about my ex",
   "with him", "with her", "with them", "love me", "loves me"
 ];
+
+/* ---------- cross-reading memory ("since last time") ---------- */
+/* The one thing in the app that reads ACROSS readings. The book already holds
+   every reading ever drawn; this looks back through it and reports the one
+   thing worth saying about repetition. Deterministic — no rng, no DOM, and it
+   never mutates the history it is handed. Returns null when there is nothing
+   true to report, so a first reading gets no line at all rather than a fake one. */
+const COUNT_WORD = { 2: "twice", 3: "three times", 4: "four times", 5: "five times", 6: "six times", 7: "seven times", 8: "eight times", 9: "nine times", 10: "ten times" };
+function countWord(n) { return COUNT_WORD[n] || (n + " times"); }
+
+function crossReading(opts) {
+  const cards   = opts.cards || [];
+  const history = opts.history || [];
+  const byId    = opts.byId || (id => CARDS.find(c => c.id === id));
+  if (!cards.length || !history.length) return null;
+
+  // How many times each drawn card has already appeared anywhere in the book.
+  const prior = {};
+  for (const r of history) {
+    for (const c of (r.cards || [])) {
+      if (c && c.cardId) prior[c.cardId] = (prior[c.cardId] || 0) + 1;
+    }
+  }
+
+  // The most-repeated card in THIS draw. Ties break by position order, so the
+  // line is deterministic for a given draw + book.
+  let best = null;
+  for (const c of cards) {
+    const n = prior[c.cardId] || 0;
+    if (n > 0 && (!best || n > best.n)) best = { id: c.cardId, n: n };
+  }
+  if (!best) return null;
+
+  const card = byId(best.id);
+  const name = card ? card.name : best.id;
+  const total = best.n + 1;            // counting this reading
+
+  if (total === 2) {
+    return name + " has come up before \u2014 this is the second time. Two isn't a pattern. I'm noting it anyway.";
+  }
+  if (total === 3) {
+    return name + " has now come up " + countWord(total) + ". At some point that stops being a coincidence, and this is that point.";
+  }
+  return name + " has come up " + countWord(total) + " now. I've stopped calling it a coincidence.";
+}
 
 /* ---------- shuffle + draw ---------- */
 function shuffleDeck(deckIds, rng) {
@@ -285,15 +331,13 @@ function drawReading(opts) {
     reversalsUsed: reversals,
     cards,
     remaining,          // carry to the next draw; empty → next draw reshuffles
-    schemaVersion: 1
+    schemaVersion: 2
   };
 }
 
 /* ---------- fox aside selection (scoped first, general fallback) ---------- */
 function foxAside(opts) {
   const question   = (opts.question || "").toLowerCase();
-  const drawnIds   = opts.drawnIds || [];
-  const history    = opts.history || [];
   const rng        = opts.rng || Math.random;
 
   const pool = [];
@@ -306,32 +350,108 @@ function foxAside(opts) {
     }
   }
 
-  if (drawnIds.length && history.length) {
-    const past = new Set();
-    for (const r of history) for (const c of (r.cards || [])) past.add(c.cardId);
-    if (drawnIds.some(id => past.has(id))) pool.push(...FOX_ASIDES.repeat);
-  }
-
+  // Repetition is NOT handled here. The fox used to claim a card was "back"
+  // with no memory behind it (a boolean that said the same thing on the second
+  // sighting as on the tenth), and it then fired alongside the real counted
+  // line — two blocks restating one observation. Cross-reading memory now owns
+  // that claim: see crossReading() and the "Since last time" section.
 
   const effective = pool.length ? pool : FOX_ASIDES.general.slice();
-  // dedupe scoped+general overlap is unnecessary (general only joins when pool empty)
   const pick = FOX_ASIDES.general.length && effective.length
     ? effective[Math.floor(rng() * effective.length)]
     : FOX_ASIDES.general[0];
   return pick;
 }
 
+/* ---------- per-card synthesis lines (approved copy) ---------- */
+/* What the card DOES when it lands in a spread — a different kind of claim
+   from the blurbs in CARDS (§5), which say what the card IS. These are the
+   synthesis layer's substance: they name the card, so a reading is about the
+   cards you actually drew rather than only the register they fell into.
+   Every line opens with the card's name so it can be dropped in after a
+   position label without a second mention. */
+const CARD_SYNTH = {
+  "the-fool":         "The Fool is early. Nothing\u2019s been decided yet, and that\u2019s the only advantage on the table \u2014 it expires the moment you commit.",
+  "the-magician":     "The Magician says you already have the pieces. This is a stocktake, not encouragement \u2014 if you can\u2019t name what you\u2019re holding, that\u2019s the reading.",
+  "the-high-priestess": "The High Priestess says you already know. Which makes this a check, not a discovery \u2014 notice how many other people you\u2019re about to ask.",
+  "the-empress":      "The Empress grows things you didn\u2019t build. The move is to leave it alone \u2014 including the part of you that keeps watching it.",
+  "the-emperor":      "The Emperor is the wall. Ask what it\u2019s holding up. If you can\u2019t answer, it isn\u2019t protecting anything \u2014 it\u2019s just familiar.",
+  "the-hierophant":   "The Hierophant is a rule you inherited and never audited. Keeping it isn\u2019t wrong. It\u2019s just untested, and it\u2019s running this decision.",
+  "the-lovers":       "The Lovers means both options are real. That\u2019s why it\u2019s hard. Anyone who says one is obviously right isn\u2019t looking at the same two things you are.",
+  "the-chariot":      "The Chariot is willpower doing a plan\u2019s job. It\u2019ll carry you and it won\u2019t steer \u2014 so pick the direction before you speed up.",
+  "strength":         "Strength isn\u2019t power over the thing. It\u2019s staying in the room with it while it\u2019s still dangerous. Where this lands, the calm is the answer.",
+  "the-hermit":       "The Hermit says stop asking. Not forever \u2014 just long enough to hear your own read without four other opinions in the room.",
+  "wheel-of-fortune": "The Wheel is the part of this you aren\u2019t steering. Plan for the next turn \u2014 this one\u2019s already moving and it didn\u2019t ask you.",
+  "justice":          "Justice is the bill arriving. You already know the total \u2014 the reading is just refusing to let you round it down.",
+  "the-hanged-man":   "The Hanged Man is a hold you chose. It pays off only if you look at the thing upside down \u2014 otherwise it\u2019s waiting with extra steps.",
+  "death":            "Death finishes things. One part of this is already over and you\u2019re still paying rent on it.",
+  "temperance":       "Temperance is the unglamorous fix. No single decision closes this \u2014 just the same small adjustment, repeated past the point where it feels like anything.",
+  "the-devil":        "The Devil means the chain is loose. It holds you because you keep re-deciding it should \u2014 you can take that or leave it, but you did draw it.",
+  "the-tower":        "The Tower is bad news that was already true. Nothing collapses here that wasn\u2019t already cracking \u2014 you\u2019re just being told now.",
+  "the-star":         "The Star is the after, not the win. Where it lands, the whole ask is one small next thing. Nothing in this reading is bigger than that.",
+  "the-moon":         "The Moon says don\u2019t decide yet. Not because the answer is hidden \u2014 because the instrument you\u2019d decide with is currently broken.",
+  "the-sun":          "The Sun is the rare card with no catch. If you\u2019re waiting for the other shoe, that\u2019s the finding \u2014 the reading is telling you nothing\u2019s coming.",
+  "judgement":        "Judgement is a summons, not a scorecard. It isn\u2019t asking whether you\u2019re good enough. It\u2019s asking whether you\u2019re going to pick up.",
+  "the-world":        "The World means this is finished \u2014 and finishing feels like nothing, on purpose. The flat feeling isn\u2019t disappointment. It\u2019s the next Fool card walking in."
+};
+
+/* ---------- register-pair connectors + closers (the depth layer) ---------- */
+/* 10 unique unordered pairs of the four registers. Each line names what the
+   two movements do to each other — the claim only that pair could make.
+   The connector for a pair NEVER mentions a third register: that's the turn's
+   job, and naming both is how a reading starts repeating itself. */
+const PAIR_LINES = {
+  "endings|endings":     "Two endings in one reading. Nothing here is asking to be saved \u2014 only to be finished in the right order.",
+  "waiting|waiting":     "Two waits side by side. The reading isn't stuck; it's saying the waiting is the situation, not the prelude to it.",
+  "structure|structure": "Two rules in one reading. The question you're asking is made of walls \u2014 the useful part is finding which one actually holds.",
+  "starting|starting":   "Two beginnings side by side. Nothing here wants to be finished yet. Stop asking where it lands.",
+  "endings|waiting":     "One of these ends, and then nothing happens for a while. The gap between those two facts is where you're standing.",
+  "endings|structure":   "Something finished here, and the frame it lived in is still standing. Decide what the frame is for now.",
+  "endings|starting":    "The old thing closes so the new one has somewhere to stand. The order matters more than either card.",
+  "structure|waiting":   "You've built the wall. Now you're standing outside it, waiting for something to change on its own.",
+  "starting|waiting":    "You started, or you're about to \u2014 and then the timing stopped being yours.",
+  "starting|structure":  "The new thing wants a shape before it can go anywhere. Name it early or it names itself."
+};
+function pairKey(a, b) { return [a, b].sort().join("|"); }
+function pairLine(a, b) { return PAIR_LINES[pairKey(a, b)] || null; }
+
+/* One closing line per register — what the reading asks of the querent,
+   keyed to the register of the card in the advice position
+   (signal for one-card, todo for five, future for three). */
+const CLOSERS = {
+  endings:   "The ask: let one thing be finished this week. Pick the easiest one. Done is the point, not dignified.",
+  waiting:   "The ask: don't decide this week. Notice what you reach for when nobody is asking you to decide — write that down instead.",
+  structure: "The ask: name the rule you're actually keeping. Out loud, to someone. If it embarrasses you said it, that's the answer.",
+  starting:  "The ask: do the smallest version before the day ends. Badly counts. The card doesn't grade."
+};
+
 /* ---------- synthesis (authored connector rules; deterministic) ---------- */
 const REGISTER = {
-  // keyword buckets: which cards talk about endings, waiting, structure, truth
+  // keyword buckets: which cards talk about endings, waiting, structure, starting.
+  // INVARIANT: every card in CARDS sits in exactly ONE bucket.
+  //   - a card in no bucket gets no position line, so the synthesis falls through to
+  //     defaultLine (that was the one-card crash);
+  //   - a card in two buckets silently resolves to whichever is declared first,
+  //     so the second entry is dead code.
   endings:   ["death", "the-tower", "the-world", "judgement"],
-  waiting:   ["the-hanged-man", "the-moon", "temperance", "the-star", "wheel-of-fortune"],
-  structure: ["the-emperor", "the-hierophant", "justice", "the-chariot"],
-  starting:  ["the-fool", "the-magician", "the-star", "the-sun"]
+  waiting:   ["the-hanged-man", "the-moon", "temperance", "wheel-of-fortune",
+              "the-high-priestess", "the-empress", "the-lovers", "strength", "the-hermit"],
+  structure: ["the-emperor", "the-hierophant", "justice", "the-chariot", "the-devil"],
+  starting:  ["the-fool", "the-magician", "the-sun", "the-star"]
 };
 function bucketOf(cardId) {
   for (const b in REGISTER) if (REGISTER[b].includes(cardId)) return b;
   return null;
+}
+
+/* Names as a person says them: "A", "A and B", "A, B and C".
+   Called from synthesize and defaultLine; hoisted, so placement is for reading only. */
+function listNames(names) {
+  const list = (names || []).filter(n => typeof n === "string" && n.length);
+  if (!list.length) return "";
+  if (list.length === 1) return list[0];
+  if (list.length === 2) return list[0] + " and " + list[1];
+  return list.slice(0, -1).join(", ") + " and " + list[list.length - 1];
 }
 
 /* ---------- position × register tension lines ---------- */
@@ -409,19 +529,117 @@ function positionRead(spread, positionKey, bucket) {
   return perPos[bucket] || null;
 }
 
+/* Which position carries the ask, per spread. */
+const ADVICE_KEY = { one: "signal", three: "future", five: "todo" };
+
+/* Register as a noun a person would say out loud, for the turn's journey line. */
+const REGISTER_NOUN = {
+  endings: "an ending", waiting: "a wait", structure: "a structure", starting: "a beginning"
+};
+
+function lowerFirst(s) {
+  if (!s) return s;
+  return s.charAt(0).toLowerCase() + s.slice(1);
+}
+
 function synthesize(opts) {
   const spread  = opts.spread;
   const cards   = opts.cards || [];     // [{cardId, reversed, positionKey}]
   const byId    = opts.byId || (id => CARDS.find(c => c.id === id));
-  if (!cards.length) return "";
+  if (!cards.length) return null;
 
-  const lines = [];
   const n = cards.length;
 
-  // 1) keyword resonance: a shared keyword across drawn cards, named plainly.
-  //    More honest than buckets — it names the actual shared word.
-  const kwCount = {};
-  const kwCards = {};
+  // One read per drawn card, kept in position order. `line` prefers the
+  // authored per-card synthesis line (what the card does when it lands);
+  // a card with none falls back to its position×register line, which is what
+  // synthetic/unknown cards get so the sweep stays honest.
+  const reads = cards.map((c, i) => {
+    const card   = byId(c.cardId);
+    const bucket = (card && card.register) || bucketOf(c.cardId);
+    const pos    = spread.positions[i] || null;
+    const cardLine = card && CARD_SYNTH[card.id] ? CARD_SYNTH[card.id] : null;
+    return {
+      c, card, bucket, pos,
+      label: pos ? (pos.label || pos.framing || "") : "",
+      isFallback: !cardLine,
+      line: cardLine || (bucket ? positionRead(spread, c.positionKey, bucket) : null)
+    };
+  });
+  const nameOf = r => (r.card ? r.card.name : r.c.cardId);
+
+  /* --- the set: each card, where it sits ------------------------------- */
+  let set = null;
+  const setParts = [];
+  for (const r of reads) {
+    if (!r.line) continue;
+    // The authored per-card lines don't carry a position phrase; the fallback
+    // position×register lines already open with one ("In the past: …"), so the
+    // lead label is only added where the line needs it.
+    const lead = (n > 1 && r.label && !r.isFallback)
+      ? r.label + (r.c.reversed ? " (reversed)" : "") + ": "
+      : (r.c.reversed ? "Reversed. " : "");
+    setParts.push(lead + r.line);
+  }
+
+  /* --- the tension: how adjacent cards pull on each other -------------- */
+  /* "Pull" means contrast: the two cards sit in different registers. A pair in
+     the SAME register doesn't pull — it agrees — so those are held back and
+     only used when the reading has no contrast to show at all. At most two
+     connectors render: a five-card read has four adjacent pairs, and four
+     stacked connectors read as a list, not a reading.
+     The connector lines are written in a fixed register order (pairKey sorts
+     alphabetically: endings < starting < structure < waiting). The two card
+     names are presented in that same order, so the sentence's direction and
+     the order the names appear never disagree. */
+  let tension = null;
+  const contrasts = [], agreements = [], tensionSeen = {};
+  for (let i = 0; i < n - 1; i++) {
+    const a = reads[i], b = reads[i + 1];
+    if (!a.bucket || !b.bucket) continue;
+    const line = pairLine(a.bucket, b.bucket);
+    if (!line || tensionSeen[line]) continue;
+    tensionSeen[line] = true;
+    const ordered = a.bucket <= b.bucket ? [a, b] : [b, a];
+    const rendered = nameOf(ordered[0]) + " and " + nameOf(ordered[1]) + ": " + lowerFirst(line);
+    (a.bucket === b.bucket ? agreements : contrasts).push(rendered);
+  }
+  const picked = (contrasts.length ? contrasts : agreements).slice(0, 2);
+  if (picked.length) tension = picked.join(" ");
+
+  /* --- the turn -------------------------------------------------------- */
+  let turn = null;
+  if (n >= 3) {
+    // The hinge when there is one: a reversed card between two uprights.
+    for (let i = 1; i < n - 1; i++) {
+      if (cards[i].reversed && !cards[i - 1].reversed && !cards[i + 1].reversed) {
+        const posLabel = (spread.positions[i].label || "").toLowerCase();
+        turn = "The hinge is " + nameOf(reads[i]) + " — the only reversed card, sitting on \u201c" + posLabel +
+          "\u201d between two uprights. That's where the reading turns. Read that one twice.";
+        break;
+      }
+    }
+    // Otherwise: the journey from the first card to the last, when it moves.
+    if (!turn) {
+      const b0 = reads[0].bucket, bL = reads[n - 1].bucket;
+      if (b0 && bL && b0 !== bL) {
+        turn = "The reading opens on " + nameOf(reads[0]) + " and closes on " + nameOf(reads[n - 1]) +
+          ". It moves from " + (REGISTER_NOUN[b0] || b0) + " to " + (REGISTER_NOUN[bL] || bL) +
+          " \u2014 and the end is where the reading puts its weight.";
+      }
+    }
+  }
+
+  /* --- the ask --------------------------------------------------------- */
+  let ask = null;
+  const adviceKey = ADVICE_KEY[spread.id];
+  const adviceRead = reads.find(r => r.c.positionKey === adviceKey);
+  if (adviceRead && adviceRead.bucket) ask = CLOSERS[adviceRead.bucket];
+
+  /* Keyword resonance: a shared keyword across drawn cards, when there is
+     one — a different kind of claim (a word the deck repeats at you), so it
+     rides along with the set rather than replacing it. Fires ~1% of draws. */
+  const kwCount = {}, kwCards = {};
   for (const c of cards) {
     const card = byId(c.cardId);
     if (!card) continue;
@@ -437,55 +655,36 @@ function synthesize(opts) {
   }
   if (bestKw) {
     const names = kwCards[bestKw];
-    lines.push(
-      "Both " + (names.length === 2 ? names.join(" and ") : listNames(names)) +
-      " are about " + bestKw + ". That's not a coincidence \u2014 that's the reading leaning."
-    );
+    setParts.push((names.length === 2 ? "Both " + names[0] + " and " + names[1] : listNames(names)) +
+      " are about " + bestKw + ". That's not a coincidence \u2014 that's the reading leaning.");
   }
 
-  // 2) position \u00d7 register: one line max, chosen by position priority —
-  //    advice/signal positions outrank context positions, so a "what to do"
-  //    card beats a "in the past" card when both have authored lines.
-  const POS_PRIORITY = { signal: 0, todo: 0, present: 1, situation: 1, lands: 2, future: 2, against: 3, underneath: 3, past: 4 };
-  let bestPosLine = null, bestPosRank = 99;
-  for (const c of cards) {
-    const bucket = bucketOf(c.cardId);
-    if (!bucket) continue;
-    const line = positionRead(spread, c.positionKey, bucket);
-    if (!line) continue;
-    const rank = POS_PRIORITY[c.positionKey] !== undefined ? POS_PRIORITY[c.positionKey] : 5;
-    if (rank < bestPosRank) { bestPosRank = rank; bestPosLine = line; }
-  }
-  if (bestPosLine) lines.push(bestPosLine);
+  /* --- since last time (cross-reading memory) --------------------------- */
+  /* The only section that reads the book rather than the cards. Null unless
+     something in this draw has actually appeared before. */
+  const memory = crossReading({ cards, history: opts.history, byId }) || "";
 
-  // 3) reversal as hinge: a reversed card between uprights is the pivot.
-  if (n >= 3) {
-    for (let i = 1; i < n - 1; i++) {
-      if (cards[i].reversed && !cards[i-1].reversed && !cards[i+1].reversed) {
-        const c = byId(cards[i].cardId);
-        const posLabel = (spread.positions[i].label || "").toLowerCase();
-        lines.push(
-          "The hinge is " + c.name + " \u2014 the only reversed card, sitting on \u201c" + posLabel +
-          "\u201d between two uprights. That's where the reading turns. Read that one twice."
-        );
-        break;
-      }
-    }
-  }
+  /* --- assemble -------------------------------------------------------- */
+  if (setParts.length) set = setParts.join(" ");
+  else set = defaultLine(spread, cards, byId);
 
-  // 4) all-reversed reading stays (rare, blunt)
+  /* --- all-reversed override (rare, blunt) ----------------------------- */
   const allReversed = cards.every(c => c.reversed);
   if (allReversed && n > 1) {
-    lines.length = 0;
-    lines.push("Every card came up reversed. Either the deck is being blunt with you, or the read here is about the underside of things \u2014 start there.");
+    set = "Every card came up reversed. Either the deck is being blunt with you, or the read here is about the underside of things — start there.";
+    tension = null;
+    turn = null;
   }
 
-  // 5) fallback: name the spread's arc plainly
-  if (lines.length === 0) {
-    lines.push(defaultLine(spread, cards, byId));
-  }
+  return { set: set || "", tension: tension || "", turn: turn || "", ask: ask || "", memory: memory };
+}
 
-  return lines.join(" ");
+/* The structured reading flattened to prose in labelled-movement order.
+   Kept for old book entries and anything that still expects a string. */
+function synthesizeText(opts) {
+  const s = synthesize(opts);
+  if (!s) return "";
+  return [s.memory, s.set, s.tension, s.turn, s.ask].filter(t => t && t.length).join(" ");
 }
 
 function defaultLine(spread, cards, byId) {
@@ -501,10 +700,17 @@ function defaultLine(spread, cards, byId) {
     const card = byId(c.cardId);
     return card.name + (c.reversed ? " (reversed)" : "");
   });
+  if (names.length === 1) return "As a set: " + names[0] + ".";
   return "As a set: " + listNames(names) + ". Read each one where it sits \u2014 the positions are doing the talking here.";
 }
 
 /* ---------- store migration (day-one, PLAN §8) ---------- */
+/* v1 → v2: readings gained a `memory` line (cross-reading memory). A v1 entry
+   has none, which is correct — it was drawn before the app remembered anything
+   — so the migration fills "" and the section simply doesn't render. Nothing
+   else about a reading changed shape. */
+const SCHEMA_VERSION = 2;
+
 function migrateReading(r) {
   if (!r || typeof r !== "object") return null;
   const out = {
@@ -515,7 +721,8 @@ function migrateReading(r) {
     reversalsUsed: !!r.reversalsUsed,
     cycleId: Number.isFinite(r.cycleId) ? r.cycleId : undefined,
     foxAside: typeof r.foxAside === "string" ? r.foxAside : "",
-    schemaVersion: 1,
+    memory: typeof r.memory === "string" ? r.memory : "",
+    schemaVersion: SCHEMA_VERSION,
     cards: []
   };
   if (Array.isArray(r.cards)) {
@@ -556,16 +763,20 @@ function migrateStore(raw) {
 // Browser global: UI references `engine.*`; keep it window-visible.
 if (typeof window !== "undefined") {
   window.engine = {
-    mulberry32, shuffleDeck, drawReading, foxAside, synthesize,
+    mulberry32, shuffleDeck, drawReading, foxAside, synthesize, synthesizeText,
+    crossReading, countWord, SCHEMA_VERSION,
     migrateReading, migrateStore,
-    CARDS, SPREADS, FOX_ASIDES, THIRD_PERSON_HINTS, REGISTER, bucketOf
+    CARDS, SPREADS, FOX_ASIDES, THIRD_PERSON_HINTS, REGISTER, bucketOf, listNames,
+    PAIR_LINES, CLOSERS, CARD_SYNTH
   };
 }
 // Node: direct require.
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
-    mulberry32, shuffleDeck, drawReading, foxAside, synthesize,
+    mulberry32, shuffleDeck, drawReading, foxAside, synthesize, synthesizeText,
+    crossReading, countWord, SCHEMA_VERSION,
     migrateReading, migrateStore,
-    CARDS, SPREADS, FOX_ASIDES, THIRD_PERSON_HINTS, REGISTER, bucketOf
+    CARDS, SPREADS, FOX_ASIDES, THIRD_PERSON_HINTS, REGISTER, bucketOf, listNames,
+    PAIR_LINES, CLOSERS, CARD_SYNTH
   };
 }
