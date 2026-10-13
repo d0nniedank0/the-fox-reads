@@ -584,10 +584,13 @@ textarea::placeholder, input[type="text"]::placeholder { color: rgba(168, 164, 1
   box-shadow:
     0 0 90px rgba(232, 226, 208, 0.22),
     0 0 240px rgba(232, 226, 208, 0.08);
-  z-index: -1;
+  z-index: 0;
   opacity: 0.9;
   pointer-events: none;
 }
+
+/* everything after the moon in the DOM must stack above it */
+.masthead, main, .site-footer { position: relative; z-index: 1; }
 .moon-disc::after {
   content: "";
   position: absolute;
