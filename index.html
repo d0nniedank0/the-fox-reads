@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Fox Reads — a fox reads your cards</title>
+  <meta name="description" content="A fox reads your cards for you. Ask a real question, shuffle it yourself, keep the reading.">
+  <meta name="theme-color" content="#12111f">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="The Fox Reads">
+  <meta property="og:description" content="A fox reads your cards for you. Ask a real question, shuffle it yourself, keep the reading.">
+  <meta property="og:url" content="https://the-fox-reads.pages.dev/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 26 L74 18 L70 44 L74 60 Q74 82 50 84 Q26 82 26 44 L30 44 L26 18 Z' fill='%23c84022'/%3E%3Ccircle cx='41' cy='52' r='3.6' fill='%23ffd9a8'/%3E%3Ccircle cx='59' cy='52' r='3.6' fill='%23ffd9a8'/%3E%3Cpath d='M46 66 L50 70 L54 66' stroke='%23ffd9a8' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Karla:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="masthead">
+    <button id="nav-home" class="brand" type="button" aria-label="The Fox Reads — home">
+      <svg class="brand-mark" viewBox="0 0 100 100" aria-hidden="true">
+        <path d="M50 26 L74 18 L70 44 L74 82 Q50 92 26 82 L30 44 L26 18 Z" fill="currentColor"/>
+        <circle cx="41" cy="52" r="3.4" fill="var(--eye)"/>
+        <circle cx="59" cy="52" r="3.4" fill="var(--eye)"/>
+        <path d="M46 64 L50 68 L54 64" stroke="var(--night)" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-name">The Fox Reads</span>
+    </button>
+    <nav class="site-nav" aria-label="Main">
+      <button id="nav-book" class="nav-link" type="button">The book</button>
+      <button id="nav-about" class="nav-link" type="button">About</button>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- ============ LETTER (first run) ============ -->
+    <section id="view-letter" class="view" aria-labelledby="letter-heading">
+      <div class="letter-plate">
+        <img class="letter-fox" src="assets/fox-paper.png" alt="An indigo fox, looking sideways, painted flat on cream paper.">
+      </div>
+      <div class="letter-text">
+        <p class="kicker">For whoever opened this</p>
+        <h1 id="letter-heading">I don&rsquo;t read cards.</h1>
+        <p>A friend asked me for a reading, so I found a fox who does.</p>
+        <p>Ask it something real. Hold the question while you shuffle. Be kind to it and it&rsquo;ll be honest with you.</p>
+        <p class="letter-sign">&mdash; <strong>CH&Lambda;OS</strong></p>
+        <button id="btn-begin" class="btn btn-vermilion" type="button">Begin</button>
+      </div>
+    </section>
+
+    <!-- ============ NAME ============ -->
+    <section id="view-name" class="view hidden" aria-labelledby="name-heading">
+      <div class="view-inner narrow">
+        <h1 id="name-heading">What should I call you?</h1>
+        <p class="lede">The fox will use it. Nothing leaves this page.</p>
+        <form id="name-form">
+          <label class="field-label" for="name-input">Your name, or what you&rsquo;d like to be called here</label>
+          <input id="name-input" type="text" maxlength="40" autocomplete="off" placeholder="Anything. Really.">
+          <div class="btn-row">
+            <button id="btn-name-go" class="btn btn-indigo" type="submit">That&rsquo;s me</button>
+          </div>
+          <p id="name-hint" class="hint">Leave it blank and the fox will simply not use a name. It won&rsquo;t be awkward.</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============ ASK ============ -->
+    <section id="view-ask" class="view hidden" aria-labelledby="ask-heading">
+      <div class="view-inner narrow">
+        <p class="kicker" id="ask-greeting">Welcome back.</p>
+        <h1 id="ask-heading">What are you asking?</h1>
+        <p class="lede">A real question gets a real reading. No question means a weaker one &mdash; the cards will pick something for you, and they won&rsquo;t know what you needed.</p>
+        <form id="ask-form">
+          <label class="field-label visually-hidden" for="question-input">Your question</label>
+          <textarea id="question-input" rows="3" maxlength="280" placeholder="Should I take the job? What&rsquo;s happening with us? Where is this heading?"></textarea>
+          <div class="btn-row">
+            <button id="btn-ask-continue" class="btn btn-indigo" type="submit">Choose a spread</button>
+          </div>
+          <p class="hint">Optional. But you knew that.</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============ SPREAD ============ -->
+    <section id="view-spread" class="view hidden" aria-labelledby="spread-heading">
+      <div class="view-inner narrow">
+        <h1 id="spread-heading">Pick a spread.</h1>
+        <p class="lede">Whichever fits the question. Fewer cards, sharper read.</p>
+        <div class="spread-list">
+          <button class="spread-choice" id="btn-spread-one" data-spread="one" type="button">
+            <span class="spread-name">One card</span>
+            <span class="spread-desc">What do I need to see today.</span>
+          </button>
+          <button class="spread-choice" id="btn-spread-three" data-spread="three" type="button">
+            <span class="spread-name">Three cards</span>
+            <span class="spread-desc">Past, present, future.</span>
+          </button>
+          <button class="spread-choice" id="btn-spread-five" data-spread="five" type="button">
+            <span class="spread-name">Five cards</span>
+            <span class="spread-desc">The decision spread &mdash; what&rsquo;s against you, what&rsquo;s underneath, what to do, where it lands.</span>
+          </button>
+        </div>
+        <p class="hint">Reversals are <span id="spread-reversal-state">off</span>. Change that in <button id="spread-about-link" class="link-plain" type="button">About</button> if you read them.</p>
+      </div>
+    </section>
+
+    <!-- ============ SHUFFLE ============ -->
+    <section id="view-shuffle" class="view hidden" aria-labelledby="shuffle-heading">
+      <div class="view-inner narrow">
+        <h1 id="shuffle-heading" class="visually-hidden">Shuffle</h1>
+        <div class="fox-anchor">
+          <img id="shuffle-fox" class="fox-small" src="assets/fox-night.png" alt="" aria-hidden="true">
+        </div>
+        <p class="lede center">Hold your question in your mind while you shuffle.</p>
+        <div id="deck-stack" class="deck-stack" role="button" tabindex="0"
+             aria-label="Press and hold to shuffle. Release when it feels like time."
+             aria-pressed="false">
+          <div class="deck-card deck-card-3"></div>
+          <div class="deck-card deck-card-2"></div>
+          <div class="deck-card deck-card-1"></div>
+          <span id="deck-label" class="deck-label">press & hold</span>
+        </div>
+        <p id="shuffle-state" class="shuffle-state" role="status">&hellip;</p>
+        <button id="btn-draw" class="btn btn-vermilion hidden" type="button">Draw</button>
+      </div>
+    </section>
+
+    <!-- ============ READING ============ -->
+    <section id="view-reading" class="view hidden" aria-labelledby="reading-heading">
+      <div class="view-inner">
+        <p class="kicker" id="reading-date"></p>
+        <h1 id="reading-heading">The reading.</h1>
+        <p class="question-echo" id="reading-question"></p>
+        <div id="reading-cards" class="cards"></div>
+        <div class="synth-block">
+          <p class="block-label">The fox reads the set:</p>
+          <p id="reading-synth" class="synth"></p>
+        </div>
+        <figure class="aside-block">
+          <img id="aside-fox" class="fox-small" src="assets/fox-night.png" alt="" aria-hidden="true">
+          <figcaption id="reading-aside" class="aside-text"></figcaption>
+        </figure>
+        <div class="btn-row">
+          <button id="btn-reading-again" class="btn btn-indigo" type="button">Read again</button>
+          <button id="btn-reading-book" class="btn btn-ghost" type="button">The book</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ BOOK ============ -->
+    <section id="view-book" class="view hidden" aria-labelledby="book-heading">
+      <div class="view-inner">
+        <h1 id="book-heading">The book.</h1>
+        <p class="lede" id="book-lede">Everything the fox has read for you, newest first.</p>
+        <div id="book-list" class="book-list"></div>
+        <div class="btn-row">
+          <button id="btn-book-ask" class="btn btn-indigo" type="button">Ask something new</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT ============ -->
+    <section id="view-about" class="view hidden" aria-labelledby="about-heading">
+      <div class="view-inner narrow">
+        <h1 id="about-heading">About.</h1>
+
+        <div class="about-card">
+          <p class="block-label">From the author</p>
+          <p>I don&rsquo;t read cards. A friend asked me for a reading, so I found a fox who does.</p>
+          <p>Ask it something real. Hold the question while you shuffle. Be kind to it and it&rsquo;ll be honest with you.</p>
+          <p class="letter-sign">&mdash; <strong>CH&Lambda;OS</strong></p>
+        </div>
+
+        <div class="about-card">
+          <p class="block-label">Settings</p>
+          <label class="check-row" for="toggle-reversals">
+            <input id="toggle-reversals" type="checkbox">
+            <span>Read reversals <span class="check-sub">(reversed cards carry their own text)</span></span>
+          </label>
+        </div>
+
+        <div class="about-card about-credits">
+          <p class="block-label">Credits</p>
+          <p>Words & the fox: <strong>CH&Lambda;OS</strong>.</p>
+          <p>Card images: the Rider&ndash;Waite&ndash;Smith tarot, Pamela Colman Smith, 1909 &mdash; public domain. Scans via Wikimedia Commons.</p>
+        </div>
+
+        <div class="btn-row">
+          <button id="btn-about-back" class="btn btn-ghost" type="button">Back</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>&mdash; read by kind hands. Made by <strong>CH&Lambda;OS</strong>, 2026.</p>
+    <p class="footer-disclaim">It can&rsquo;t see the future. It just pays attention.</p>
+  </footer>
+
+  <script src="js/engine.js" defer></script>
+  <script src="js/app.js" defer></script>
+</body>
+</html>

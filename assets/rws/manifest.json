@@ -1,0 +1,112 @@
+{
+ "00-the-fool": {
+  "file": "assets/rws/00-the-fool.jpg",
+  "w": 500,
+  "h": 839
+ },
+ "01-the-magician": {
+  "file": "assets/rws/01-the-magician.jpg",
+  "w": 500,
+  "h": 866
+ },
+ "02-the-high-priestess": {
+  "file": "assets/rws/02-the-high-priestess.jpg",
+  "w": 500,
+  "h": 859
+ },
+ "03-the-empress": {
+  "file": "assets/rws/03-the-empress.jpg",
+  "w": 500,
+  "h": 855
+ },
+ "04-the-emperor": {
+  "file": "assets/rws/04-the-emperor.jpg",
+  "w": 500,
+  "h": 859
+ },
+ "05-the-hierophant": {
+  "file": "assets/rws/05-the-hierophant.jpg",
+  "w": 500,
+  "h": 861
+ },
+ "06-the-lovers": {
+  "file": "assets/rws/06-the-lovers.jpg",
+  "w": 500,
+  "h": 856
+ },
+ "07-the-chariot": {
+  "file": "assets/rws/07-the-chariot.jpg",
+  "w": 500,
+  "h": 864
+ },
+ "08-strength": {
+  "file": "assets/rws/08-strength.jpg",
+  "w": 500,
+  "h": 861
+ },
+ "09-the-hermit": {
+  "file": "assets/rws/09-the-hermit.jpg",
+  "w": 500,
+  "h": 855
+ },
+ "10-wheel-of-fortune": {
+  "file": "assets/rws/10-wheel-of-fortune.jpg",
+  "w": 500,
+  "h": 870
+ },
+ "11-justice": {
+  "file": "assets/rws/11-justice.jpg",
+  "w": 500,
+  "h": 861
+ },
+ "12-the-hanged-man": {
+  "file": "assets/rws/12-the-hanged-man.jpg",
+  "w": 500,
+  "h": 879
+ },
+ "13-death": {
+  "file": "assets/rws/13-death.jpg",
+  "w": 500,
+  "h": 864
+ },
+ "14-temperance": {
+  "file": "assets/rws/14-temperance.jpg",
+  "w": 500,
+  "h": 868
+ },
+ "15-the-devil": {
+  "file": "assets/rws/15-the-devil.jpg",
+  "w": 500,
+  "h": 881
+ },
+ "16-the-tower": {
+  "file": "assets/rws/16-the-tower.jpg",
+  "w": 500,
+  "h": 866
+ },
+ "17-the-star": {
+  "file": "assets/rws/17-the-star.jpg",
+  "w": 500,
+  "h": 861
+ },
+ "18-the-moon": {
+  "file": "assets/rws/18-the-moon.jpg",
+  "w": 500,
+  "h": 864
+ },
+ "19-the-sun": {
+  "file": "assets/rws/19-the-sun.jpg",
+  "w": 500,
+  "h": 861
+ },
+ "20-judgement": {
+  "file": "assets/rws/20-judgement.jpg",
+  "w": 500,
+  "h": 861
+ },
+ "21-the-world": {
+  "file": "assets/rws/21-the-world.jpg",
+  "w": 500,
+  "h": 863
+ }
+}
