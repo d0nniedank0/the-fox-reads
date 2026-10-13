@@ -512,9 +512,17 @@ textarea::placeholder, input[type="text"]::placeholder { color: rgba(168, 164, 1
   font-family: var(--sans);
   font-size: 14.5px;
   color: var(--bone-dim);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
 }
 .site-footer p { margin: 0 0 4px; }
 .footer-disclaim { color: rgba(168, 164, 184, 0.7); }
+@media (max-width: 640px) {
+  /* falls to two stacked lines on narrow screens rather than truncating */
+  .site-footer { flex-direction: column; align-items: flex-start; gap: 4px; }
+}
 
 /* ---------- fox flicker (the deck breathes) ---------- */
 
