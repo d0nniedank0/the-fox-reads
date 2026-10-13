@@ -10,7 +10,7 @@
   <meta property="og:title" content="The Fox Reads">
   <meta property="og:description" content="A fox reads your cards for you. Ask a real question, shuffle it yourself, keep the reading.">
   <meta property="og:url" content="https://the-fox-reads.pages.dev/">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 26 L74 18 L70 44 L74 60 Q74 82 50 84 Q26 82 26 44 L30 44 L26 18 Z' fill='%23c84022'/%3E%3Ccircle cx='41' cy='52' r='3.6' fill='%23ffd9a8'/%3E%3Ccircle cx='59' cy='52' r='3.6' fill='%23ffd9a8'/%3E%3Cpath d='M46 66 L50 70 L54 66' stroke='%23ffd9a8' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='18' y='36' width='32' height='46' rx='4' fill='%2312111f' stroke='%23e04a2a' stroke-width='5' transform='rotate(-14 34 59)'/%3E%3Crect x='50' y='36' width='32' height='46' rx='4' fill='%2312111f' stroke='%23e04a2a' stroke-width='5' transform='rotate(14 66 59)'/%3E%3Crect x='34' y='24' width='32' height='46' rx='4' fill='%23f4eddd'/%3E%3Ccircle cx='50' cy='47' r='8' fill='none' stroke='%2325236b' stroke-width='3'/%3E%3Cpath d='M50 39 A 8 8 0 0 1 50 55 Z' fill='%2325236b'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Karla:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
@@ -22,10 +22,20 @@
   <header class="masthead">
     <button id="nav-home" class="brand" type="button" aria-label="The Fox Reads — home">
       <svg class="brand-mark" viewBox="0 0 100 100" aria-hidden="true">
-        <path d="M50 26 L74 18 L70 44 L74 82 Q50 92 26 82 L30 44 L26 18 Z" fill="currentColor"/>
-        <circle cx="41" cy="52" r="3.4" fill="var(--eye)"/>
-        <circle cx="59" cy="52" r="3.4" fill="var(--eye)"/>
-        <path d="M46 64 L50 68 L54 64" stroke="var(--night)" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        <!-- the deal: three fanned cards, back-flipping -->
+        <g transform="rotate(-14 50 62)">
+          <rect x="20" y="34" width="36" height="52" rx="4"
+                fill="var(--night)" stroke="var(--vermilion)" stroke-width="4.5"/>
+        </g>
+        <g transform="rotate(14 50 62)">
+          <rect x="44" y="34" width="36" height="52" rx="4"
+                fill="var(--night)" stroke="var(--vermilion)" stroke-width="4.5"/>
+        </g>
+        <g transform="rotate(0)">
+          <rect x="32" y="26" width="36" height="52" rx="4" fill="var(--bone)"/>
+          <circle cx="50" cy="52" r="9" fill="none" stroke="var(--indigo-deep)" stroke-width="3"/>
+          <path d="M50 43 A 9 9 0 0 1 50 61" fill="var(--indigo-deep)" stroke="none"/>
+        </g>
       </svg>
       <span class="brand-name">The Fox Reads</span>
     </button>
@@ -80,7 +90,7 @@
           <div class="btn-row">
             <button id="btn-ask-continue" class="btn btn-indigo" type="submit">Choose a spread</button>
           </div>
-          <p class="hint">This part is optional.</p>
+          <p class="hint">Asking a question is optional.</p>
         </form>
       </div>
     </section>
