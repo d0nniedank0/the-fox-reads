@@ -67,7 +67,15 @@ html, body {
   gap: 12px;
   padding: 14px 22px;
   border-bottom: 1px solid var(--hairline);
+  background: rgba(10, 9, 18, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
+.nav-link { color: var(--ink-warm, #e7e2d7); text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+.nav-link:hover { color: #fff; background: rgba(124, 130, 230, 0.18); }
 
 .brand {
   display: inline-flex;
@@ -269,21 +277,6 @@ textarea::placeholder, input[type="text"]::placeholder { color: rgba(168, 164, 1
 .fox-anchor { display: flex; justify-content: center; margin: 6px 0 10px; }
 .fox-small { width: 108px; height: auto; opacity: 0.92; }
 
-.deck-fox-row {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 26px;
-  margin: 26px auto 8px;
-}
-.deck-fox {
-  width: 132px;
-  height: auto;
-  opacity: 0.95;
-  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.4));
-  animation: breathe 5.5s ease-in-out infinite;
-}
-
 .deck-stack {
   position: relative;
   width: 190px;
@@ -306,6 +299,30 @@ textarea::placeholder, input[type="text"]::placeholder { color: rgba(168, 164, 1
   border: 1px solid rgba(0, 0, 0, 0.25);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
 }
+
+/* deck centered, 4 cards now */
+.deck-stack { margin: 30px auto 20px; }
+.deck-card-4 {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  z-index: 0;
+  background: linear-gradient(150deg, #efe6d4, #d9cdb4);
+  transform: translate(0, -8px) rotate(0deg);
+}
+.deck-stack.shuffling .deck-card-4 { animation: riffle-a 0.26s ease-in-out infinite alternate; }
+
+.card-fox {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 62%;
+  height: 62%;
+  color: var(--indigo-deep);
+  pointer-events: none;
+}
+.deck-card-3 .card-fox { top: 8%; }
+
 .deck-card-1 { transform: translate(0,0) rotate(0deg); z-index: 3; }
 .deck-card-2 { transform: translate(7px, -5px) rotate(2.2deg); z-index: 2; }
 .deck-card-3 { transform: translate(-7px, -3px) rotate(-2.4deg); z-index: 1; background: linear-gradient(150deg, #ede4d0, #ddd2b8); }

@@ -90,7 +90,7 @@
           <label class="field-label visually-hidden" for="question-input">Your question</label>
           <textarea id="question-input" rows="3" maxlength="280" placeholder="Should I take the job? What&rsquo;s happening with us? Where is this heading?"></textarea>
           <div class="btn-row">
-            <button id="btn-ask-continue" class="btn btn-indigo" type="submit">Choose a spread</button>
+            <button id="btn-ask-continue" class="btn btn-indigo" type="submit">Get a reading</button>
           </div>
           <p class="hint">Asking a question is optional.</p>
         </form>
@@ -125,16 +125,22 @@
       <div class="view-inner narrow">
         <h1 id="shuffle-heading" class="visually-hidden">Shuffle</h1>
         <p class="lede center">Hold your question in your mind while you shuffle.</p>
-        <div class="deck-fox-row">
-          <img id="deck-fox" class="deck-fox" src="assets/fox-night.png" alt="" aria-hidden="true">
-          <div id="deck-stack" class="deck-stack" role="button" tabindex="0"
-               aria-label="Press and hold to shuffle. Release when it feels like time."
-               aria-pressed="false">
-            <div class="deck-card deck-card-3"></div>
-            <div class="deck-card deck-card-2"></div>
-            <div class="deck-card deck-card-1"></div>
-            <span id="deck-label" class="deck-label">press &amp; hold</span>
+        <div id="deck-stack" class="deck-stack" role="button" tabindex="0"
+             aria-label="Press and hold to shuffle. Release when it feels like time."
+             aria-pressed="false">
+          <div class="deck-card deck-card-4"></div>
+          <div class="deck-card deck-card-3">
+            <svg class="card-fox" viewBox="0 0 100 110" aria-hidden="true">
+              <path d="M50 34 L72 26 L69 46 L72 80 Q50 92 28 80 L31 46 L28 26 Z" fill="currentColor"/>
+              <circle cx="42" cy="56" r="3.2" fill="var(--night)"/>
+              <circle cx="58" cy="56" r="3.2" fill="var(--night)"/>
+              <path d="M46 68 L50 72 L54 68" stroke="var(--night)" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+              <path d="M31 48 L36 52 M69 48 L64 52" stroke="var(--night)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
           </div>
+          <div class="deck-card deck-card-2"></div>
+          <div class="deck-card deck-card-1"></div>
+          <span id="deck-label" class="deck-label">press &amp; hold</span>
         </div>
         <p id="shuffle-state" class="shuffle-state" role="status">&hellip;</p>
         <button id="btn-draw" class="btn btn-vermilion hidden" type="button">Draw</button>
